@@ -1,0 +1,12 @@
+{
+  "name": "articodingserver",
+  "version": "1.0.0",
+  "description": "Servidor Articoding para niveles persoalizados",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.5.1",
+    "express": "^4.7.1",
+    "method-override": "^2.1.2",
+    "mongoose": "^6.8.3"
+  }
+}
