@@ -65,14 +65,7 @@
     exports.addLevel = function(req, res) {
         console.log('POST');
         console.log(req.body.name);
-        var newLevel = new Level({
-            boardstate: {
-                rows:req.body.boardstate.rows,
-                columns:req.body.boardstate.columns
-            },
-            name: req.body.name,
-            id: req.body.id
-        });
+        var newLevel = new Level(req.body);
 
         newLevel.save(function(err) {
             if(!err) {
