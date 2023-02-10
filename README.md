@@ -27,3 +27,55 @@ BBDD de niveles conectada!
 
 ```
 Y ya está lista para recibir peticiones
+Para poder probar sin integración, se ha añadido una colección de peticiones para usar sobre la herramienta postman
+
+<https://www.postman.com/downloads/>
+
+En esa colección existen todas las peticiones del servidor. En cualquier caso, un ejemplo de POST que se puede lanzar desde consola seria
+
+
+```console
+curl --location --request POST 'localhost:5000/levels' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+"activeblocks": {
+"specialblock": "bla",
+"categories":[{
+"categoryname" : "tal",
+"blocksinfo": [
+{"activate" : true,
+"activeblocks" :[
+{
+"blockname": "pepe",
+"maxuses": 12
+}
+]}
+]}
+]
+},
+"boardstate": {
+"rows": 4,
+"columns": 4,
+"cells": [{
+"id": 1,
+"x": 1,
+"y": 2
+}],
+"boardElements": [{
+"id": 1,
+"x": 1,
+"y": 2,
+"orientation": 1
+}],
+"boardHints": [{
+"id": 1,
+"x": 1,
+"y": 2,
+"orientation": 1,
+"amount": 12
+}]
+},
+
+    "name": "Prueba 28"
+}'
+```
