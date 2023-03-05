@@ -33,21 +33,21 @@ var boardstate = new Schema({
     boardHints:  {type:[boardhintstate], required: true}
 });
 var blockinfoSchema = new Schema({
-    blockname: {type:String, required: true},
-    maxuses: {type:Number, required: true},
+    blockName: {type:String, required: true},
+    maxUses: {type:Number, required: true},
 });
 
 var categoryblocksinfoSchema = new Schema({
     activate:{type:Boolean, required: true},
-    activeblocks: [blockinfoSchema]
+    activeBlocks: [blockinfoSchema]
 });
 
 var categorydataSchema = new Schema({
-    categoryname: {type:String, required: true},
-    blocksinfo: [categoryblocksinfoSchema]
+    categoryName: {type:String, required: true},
+    blocksInfo: [categoryblocksinfoSchema]
 });
 var activeblocks = new Schema({
-    specialblock: {type:String, required: true},
+    specialBlock:String,
     categories: {type:[categorydataSchema], required: true},
 });
 var Level = new Schema({
