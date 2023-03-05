@@ -43,7 +43,7 @@ var categoryblocksinfoSchema = new Schema({
 });
 
 var categorydataSchema = new Schema({
-    categoryName: type:String,
+    categoryName:String,
     blocksInfo: [categoryblocksinfoSchema]
 });
 var activeblocks = new Schema({
