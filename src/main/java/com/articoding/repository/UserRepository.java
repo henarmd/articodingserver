@@ -1,9 +1,7 @@
 package com.articoding.repository;
 
-import com.articoding.model.ClassRoom;
-import com.articoding.model.IUser;
+import com.articoding.model.in.IUser;
 import com.articoding.model.Role;
-import com.articoding.model.in.IClassRoom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +17,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	User findByUsername(String username);
 
 	Page<IUser> findByRolesIn(Pageable pageable, List<Role> roles);
-
-	
 }

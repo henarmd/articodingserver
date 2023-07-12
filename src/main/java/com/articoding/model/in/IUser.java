@@ -1,5 +1,6 @@
-package com.articoding.model;
+package com.articoding.model.in;
 
+import com.articoding.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.beans.factory.annotation.Value;
 

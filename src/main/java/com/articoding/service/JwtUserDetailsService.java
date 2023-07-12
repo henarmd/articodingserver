@@ -73,16 +73,16 @@ public class JwtUserDetailsService implements UserDetailsService {
 		for (String role: user.getRoles()) {
 			Role newRole = null;
 			switch (role) {
-				case "ROLE_ROOT":{
-					if (actualUserRoles.contains("ROLE_ROOT")) {
-						newRole = roleRepository.findByName("ROLE_ROOT");
+				case "ROLE_ADMIN":{
+					if (actualUserRoles.contains("ROLE_ADMIN")) {
+						newRole = roleRepository.findByName("ROLE_ADMIN");
 					} else {
 					throw new RuntimeException("No eres tan importante maquina");
 					}
 				} break;
-				case "ROLE_ADMIN":{
-					if (actualUserRoles.contains("ROLE_ROOT")) {
-						newRole = roleRepository.findByName("ROLE_ADMIN");
+				case "ROLE_TEACHER":{
+					if (actualUserRoles.contains("ROLE_ADMIN")) {
+						newRole = roleRepository.findByName("ROLE_TEACHER");
 					} else {
 						throw new RuntimeException("No eres tan importante maquina");
 					}

@@ -14,8 +14,6 @@ public class Level {
     @ManyToOne()
     private User owner;
 
-    private String artiCodingLevel;
-
     private String title;
 
     private String description;
@@ -29,7 +27,12 @@ public class Level {
     @ManyToMany(mappedBy = "levels")
     private List<ClassRoom> classRooms;
 
+    @Column(columnDefinition="TEXT")
+    private String serializaArticodeingLevel;
+
     private boolean publicLevel;
+
+    private boolean active = true;
 
     public Level() {
     }
@@ -48,14 +51,6 @@ public class Level {
 
     public void setOwner(User owner) {
         this.owner = owner;
-    }
-
-    public String getArtiCodingLevel() {
-        return artiCodingLevel;
-    }
-
-    public void setArtiCodingLevel(String artiCodingLevel) {
-        this.artiCodingLevel = artiCodingLevel;
     }
 
     public String getTitle() {
@@ -90,11 +85,11 @@ public class Level {
         this.commentList = commentList;
     }
 
-    public List<ClassRoom> getClasses() {
+    public List<ClassRoom> getClassRooms() {
         return classRooms;
     }
 
-    public void setClasses(List<ClassRoom> classRooms) {
+    public void setClassRooms(List<ClassRoom> classRooms) {
         this.classRooms = classRooms;
     }
 
@@ -104,5 +99,21 @@ public class Level {
 
     public void setPublicLevel(boolean publicLevel) {
         this.publicLevel = publicLevel;
+    }
+
+    public String getSerializaArticodeingLevel() {
+        return serializaArticodeingLevel;
+    }
+
+    public void setSerializaArticodeingLevel(String serializaArticodeingLevel) {
+        this.serializaArticodeingLevel = serializaArticodeingLevel;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

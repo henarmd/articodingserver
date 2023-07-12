@@ -1,7 +1,6 @@
 package com.articoding.controller;
 
-import com.articoding.model.ClassRoom;
-import com.articoding.model.IUser;
+import com.articoding.model.in.IUser;
 import com.articoding.model.in.IClassRoom;
 import com.articoding.service.ClassService;
 import com.articoding.service.UserService;

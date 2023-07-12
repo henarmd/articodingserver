@@ -1,14 +1,20 @@
 package com.articoding.service;
 
+import com.articoding.RoleHelper;
+import com.articoding.error.ErrorNotFound;
+import com.articoding.error.NotAuthorization;
 import com.articoding.model.ClassRoom;
 import com.articoding.model.User;
 import com.articoding.model.in.ClassForm;
 import com.articoding.model.in.IClassRoom;
+import com.articoding.model.in.ILevel;
 import com.articoding.repository.ClassRepository;
+import com.articoding.repository.LevelRepository;
 import com.articoding.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,10 +30,18 @@ public class ClassService {
     @Autowired
     ClassRepository classRepository;
 
+    @Autowired
+    LevelRepository levelRepository;
+    @Autowired
+    RoleHelper roleHelper;
 
-    public ClassRoom createClass(User owner, ClassForm classForm) {
+    public ClassRoom createClass(User actualUser, ClassForm classForm) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        /** Comprobamos que sea profesor */
+        if(!roleHelper.isTeacher(actualUser)) {
+            throw new NotAuthorization("Sin el role teacher no se pueden crear clases");
+        }
+
         ClassRoom newClassRoom = new ClassRoom();
         newClassRoom.setDescription(classForm.getDescription());
         newClassRoom.setName(classForm.getName());
@@ -37,7 +51,7 @@ public class ClassService {
             if (userOptional.isPresent()) {
                 students.add(userOptional.get());
             } else {
-                throw new RuntimeException("eSTE CABALLERO NO EXISTE");
+                throw new ErrorNotFound("usuario", studentId);
             }
         });
         newClassRoom.setStudents(students);
@@ -46,12 +60,16 @@ public class ClassService {
         classForm.getTeachersId().forEach(studentId -> {
             Optional<User> userOptional = userRepository.findById(studentId);
             if (userOptional.isPresent()) {
-                teachers.add(userOptional.get());
+                if( roleHelper.isTeacher(userOptional.get())) {
+                    teachers.add(userOptional.get());
+                } else {
+                    throw new NotAuthorization("Uno de los profesores de la clase, no está autorizado");
+                }
             } else {
-                throw new RuntimeException("eSTE CABALLERO NO EXISTE");
+                throw new ErrorNotFound("usuario", studentId);
             }
         });
-        teachers.add(owner);
+        teachers.add(actualUser);
         newClassRoom.setTeachers(teachers);
 
         return classRepository.save(newClassRoom);
@@ -73,5 +91,29 @@ public class ClassService {
         } else {
             return classRepository.findByTeachersId(userId);
         }
+    }
+
+    public List<ILevel> getAllLevels(User actualUser, Long classId) {
+        /** Comprobamos que existe la clase */
+        ClassRoom classRoom = classRepository.findById(classId)
+                .orElseThrow(()-> new ErrorNotFound("clase", classId));
+        /** Comprobamos que es alumno o profesor de la clase */
+        if (!classRoom.getStudents().stream().anyMatch(s -> s.getId() == actualUser.getId()) &&
+                !classRoom.getTeachers().stream().anyMatch(t-> t.getId() == actualUser.getId())) {
+            throw new NotAuthorization("acceder a la clase con id " + classId);
+        }
+        return levelRepository.findByClassRooms(classRoom, ILevel.class);
+    }
+
+    public IClassRoom getById(User actualUser, Long classId) {
+        /** Comprobamos que existe la clase */
+        ClassRoom classRoom = classRepository.findById(classId)
+                .orElseThrow(()-> new ErrorNotFound("clase", classId));
+        /** Comprobamos que es alumno o profesor de la clase */
+        if (!classRoom.getStudents().stream().anyMatch(s -> s.getId() == actualUser.getId()) &&
+                !classRoom.getTeachers().stream().anyMatch(t-> t.getId() == actualUser.getId())) {
+            throw new NotAuthorization("acceder a la clase con id " + classId);
+        }
+        return classRepository.findById(classId, IClassRoom.class);
     }
 }

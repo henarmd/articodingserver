@@ -2,7 +2,7 @@ package com.articoding.service;
 
 import com.articoding.RoleHelper;
 import com.articoding.model.ClassRoom;
-import com.articoding.model.IUser;
+import com.articoding.model.in.IUser;
 import com.articoding.model.User;
 import com.articoding.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

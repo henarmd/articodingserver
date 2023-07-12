@@ -1,4 +1,4 @@
-package com.articoding.model;
+package com.articoding.model.in;
 
 public interface IRole {
 

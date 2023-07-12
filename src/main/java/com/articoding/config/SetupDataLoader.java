@@ -37,12 +37,12 @@ public class SetupDataLoader implements
         if (alreadySetup)
             return;
 
-        createRoleIfNotFound("ROLE_ROOT");
         createRoleIfNotFound("ROLE_ADMIN");
+        createRoleIfNotFound("ROLE_TEACHER");
         createRoleIfNotFound("ROLE_USER");
 
 
-        Role adminRole = roleRepository.findByName("ROLE_ROOT");
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
         if (adminRole.getUsers().isEmpty()) {
             User user = new User();
             user.setUsername("root");

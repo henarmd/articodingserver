@@ -1,6 +1,5 @@
 package com.articoding.model.in;
 
-import com.articoding.model.IUser;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
