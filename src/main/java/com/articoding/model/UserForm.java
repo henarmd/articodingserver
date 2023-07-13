@@ -2,13 +2,15 @@ package com.articoding.model;
 
 import java.util.List;
 
-public class PotencialUser {
+public class UserForm {
 
     private String username;
 
     private String password;
 
     private List<String> roles;
+
+    private List<Long> classes;
 
     public String getUsername() {
         return username;
@@ -32,5 +34,13 @@ public class PotencialUser {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public List<Long> getClasses() {
+        return classes;
+    }
+
+    public void setClasses(List<Long> classes) {
+        this.classes = classes;
     }
 }

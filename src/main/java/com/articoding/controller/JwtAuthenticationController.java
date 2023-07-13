@@ -1,6 +1,5 @@
 package com.articoding.controller;
 
-import com.articoding.model.PotencialUser;
 import com.articoding.service.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,11 +43,7 @@ public class JwtAuthenticationController {
 
 		return ResponseEntity.ok(new JwtResponse(token));
 	}
-	
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<?> saveUser(@RequestBody PotencialUser user) throws Exception {
-		return ResponseEntity.ok(userDetailsService.save(user));
-	}
+
 
 	private void authenticate(String username, String password) throws Exception {
 		try {

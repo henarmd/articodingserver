@@ -1,11 +1,10 @@
 package com.articoding.service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.articoding.model.PotencialUser;
+import com.articoding.model.UserForm;
 import com.articoding.model.Role;
 import com.articoding.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +28,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 	private UserRepository userRepository;
 	@Autowired
 	private RoleRepository roleRepository;
-	@Autowired
-	private PasswordEncoder bcryptEncoder;
+
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -61,41 +59,5 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return authorities;
 	}
 
-	public User save(PotencialUser user) {
-		User newUser = new User();
-		newUser.setUsername(user.getUsername());
-		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
-		newUser.setEnabled(true);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		List<SimpleGrantedAuthority> privileges = (List<SimpleGrantedAuthority>) authentication.getAuthorities();
-		List<String> actualUserRoles = privileges.stream().map(simpleGrantedAuthority -> simpleGrantedAuthority.getAuthority()).collect(Collectors.toList());
-		List<Role> roleList = new ArrayList<>();
-		for (String role: user.getRoles()) {
-			Role newRole = null;
-			switch (role) {
-				case "ROLE_ADMIN":{
-					if (actualUserRoles.contains("ROLE_ADMIN")) {
-						newRole = roleRepository.findByName("ROLE_ADMIN");
-					} else {
-					throw new RuntimeException("No eres tan importante maquina");
-					}
-				} break;
-				case "ROLE_TEACHER":{
-					if (actualUserRoles.contains("ROLE_ADMIN")) {
-						newRole = roleRepository.findByName("ROLE_TEACHER");
-					} else {
-						throw new RuntimeException("No eres tan importante maquina");
-					}
-				}break;
-				case "ROLE_USER":{
-					newRole = roleRepository.findByName("ROLE_USER");
-				}break;
-				default:
-					throw new RuntimeException("pero que role es ese, maquina...");//TODO
-			}
-			roleList.add(newRole);
-		}
-		newUser.setRoles(roleList);
-		return userRepository.save(newUser);
-	}
+
 }

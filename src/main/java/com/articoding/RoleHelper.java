@@ -19,10 +19,6 @@ public class RoleHelper {
     @Autowired
     RoleRepository roleRepository;
 
-    Role ROOT;
-    Role ADMIN;
-    Role USER;
-
     public List<Role> getRole() {
         List<Role> roles = new ArrayList<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -79,5 +75,16 @@ public class RoleHelper {
 
     public boolean isTeacher(User actualUser) {
         return actualUser.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_TEACHER"));
+    }
+
+    public Role getAdmin() {
+        return roleRepository.findByName("ROLE_ADMIN");
+    }
+    public Role getTeacher() {
+        return roleRepository.findByName("ROLE_TEACHER");
+    }
+
+    public Role getUser() {
+        return roleRepository.findByName("ROLE_USER");
     }
 }
