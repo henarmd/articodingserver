@@ -12,6 +12,8 @@ import com.articoding.repository.ClassRepository;
 import com.articoding.repository.LevelRepository;
 import com.articoding.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +25,9 @@ import java.util.Optional;
 
 @Service
 public class ClassService {
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     UserRepository userRepository;
@@ -76,44 +81,47 @@ public class ClassService {
 
     }
 
-    public List<IClassRoom> getUserClasses(Long idUser) {
-        return classRepository.findByStudentsId(idUser);
-    }
 
-    public List<IClassRoom> getTeacherClasses(Long idUser) {
-        return classRepository.findByTeachersId(idUser);
-    }
-
-    public List<IClassRoom> getAllClassesPerUser(User userOwner, boolean student) {
-        Long userId = userOwner.getId();
-        if (student) {
-            return classRepository.findByStudentsId(userId);
-        } else {
-            return classRepository.findByTeachersId(userId);
-        }
-    }
-
-    public List<ILevel> getAllLevels(User actualUser, Long classId) {
+    public IClassRoom getById(Long classId) {
+        User actualUser = userService.getActualUser();
         /** Comprobamos que existe la clase */
         ClassRoom classRoom = classRepository.findById(classId)
                 .orElseThrow(()-> new ErrorNotFound("clase", classId));
-        /** Comprobamos que es alumno o profesor de la clase */
-        if (!classRoom.getStudents().stream().anyMatch(s -> s.getId() == actualUser.getId()) &&
-                !classRoom.getTeachers().stream().anyMatch(t-> t.getId() == actualUser.getId())) {
-            throw new NotAuthorization("acceder a la clase con id " + classId);
-        }
-        return levelRepository.findByClassRooms(classRoom, ILevel.class);
-    }
-
-    public IClassRoom getById(User actualUser, Long classId) {
-        /** Comprobamos que existe la clase */
-        ClassRoom classRoom = classRepository.findById(classId)
-                .orElseThrow(()-> new ErrorNotFound("clase", classId));
-        /** Comprobamos que es alumno o profesor de la clase */
-        if (!classRoom.getStudents().stream().anyMatch(s -> s.getId() == actualUser.getId()) &&
+        /** Comprobamos que es ADMIN o alumno o profesor de la clase */
+        if (!roleHelper.isAdmin(actualUser) && !classRoom.getStudents().stream().anyMatch(s -> s.getId() == actualUser.getId()) &&
                 !classRoom.getTeachers().stream().anyMatch(t-> t.getId() == actualUser.getId())) {
             throw new NotAuthorization("acceder a la clase con id " + classId);
         }
         return classRepository.findById(classId, IClassRoom.class);
+    }
+
+    public Page<IClassRoom> getClasses(PageRequest pageRequest, Optional<Long> userId, Optional<Long> teachId, Optional<Long> levelId) {
+        /** Si quiere saber las clases de un usuario o de un nivel, debe ser minimo profesor*/
+        User actualUser = userService.getActualUser();
+        if(userId.isPresent() || teachId.isPresent() || levelId.isPresent()) {
+            if(!roleHelper.can(actualUser.getRoles(), "ROLE_TEACHER")) {
+                throw new NotAuthorization("get class of user ");
+            } else {/** Deveulvo las clases de las que es usuario o profesor */
+                if(userId.isPresent()) {
+                    return classRepository.findByStudentsId( userId.get(),pageRequest, IClassRoom.class);
+                } else if (teachId.isPresent()){
+                    return classRepository.findByTeachersId( teachId.get(),pageRequest, IClassRoom.class);
+                } else {
+                    return classRepository.findByLevelsId( levelId.get(),pageRequest, IClassRoom.class);
+                }
+            }
+        } else {
+            if(roleHelper.isAdmin(actualUser)) {
+                /** Si es ADMIN, devuelve TODAS las clases*/
+                return classRepository.findBy(pageRequest, IClassRoom.class);
+            } else if (roleHelper.isTeacher(actualUser)) {
+                /** Si es profe devuelve todas las clases donde es profesor*/
+                return classRepository.findByTeachersId( actualUser.getId(),pageRequest, IClassRoom.class);
+            } else {
+                /** Si es alumno, deveulve las clases en las que es alumno */
+                return classRepository.findByStudentsId(actualUser.getId(),pageRequest, IClassRoom.class);
+            }
+        }
+
     }
 }

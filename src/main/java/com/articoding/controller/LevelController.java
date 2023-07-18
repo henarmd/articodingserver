@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/levels")
 public class LevelController {
@@ -35,8 +37,11 @@ public class LevelController {
     @GetMapping
     public ResponseEntity<Page<ILevel>> getLevels(
             @RequestParam(name = "page", defaultValue = "0" ) int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) throws Exception {
-        return ResponseEntity.ok(levelService.getLevels(userService.getActualUser(), PageRequest.of(page, size)));
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "class",required=false) Optional<Long> classId,
+            @RequestParam(name = "user", required=false) Optional<Long> userId
+            ) throws Exception {
+        return ResponseEntity.ok(levelService.getLevels(PageRequest.of(page, size), classId, userId));
     }
 
 }

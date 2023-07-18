@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -37,16 +38,6 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder bcryptEncoder;
-
-
-
-    public List<ClassRoom> getClasses(Long userId) {
-        User user = userRepository.getOne(userId);
-        if(user == null) {
-            throw new RuntimeException("eso no existe loco");
-        }
-        return null;
-    }
 
     public User getActualUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -114,37 +105,37 @@ public class UserService {
         return createdUser.getId();
     }
 
-    public Page<IUser> getUsers(Pageable pageable) {
-        /** Comprobamos que sea, mínimo profesor */
+    public Page<IUser> geAllUser(PageRequest pageable, Optional<Long> clase, boolean teacher) {
         User actualUser = this.getActualUser();
+        /** Comprobamos que sea, mínimo profesor */
         if(!roleHelper.can(actualUser.getRoles(),"ROLE_TEACHER")) {
             throw new  NotAuthorization("obtener usuarios");
         }
-        /** Si es admin, mostramos todos */
-        if(roleHelper.isAdmin(actualUser)) {
-            return userRepository.findBy(pageable, IUser.class);
+
+        /** Si quiere todos los usuarios de una clase*/
+        if(clase.isPresent()) {
+            /** Comprobamos que exista la clase*/
+            ClassRoom classRoom = classRepository.findById(clase.get())
+                    .orElseThrow(() -> new ErrorNotFound("clase", clase.get()));
+
+            /** Comprobamos que sea ADMIN o profesor de la clase en cuestion */
+            if (!roleHelper.isAdmin(actualUser) && !classRoom.getTeachers().stream().anyMatch(t -> t.getId() == actualUser.getId())) {
+                throw new NotAuthorization("obtener alumnos de la clase " + clase.get());
+            }
+            if(teacher) {
+                return userRepository.findByOwnerClassRoomsIn(pageable, Arrays.asList(classRoom) , IUser.class);
+            } else {
+                return userRepository.findByClassRoomsIn(pageable, Arrays.asList(classRoom) , IUser.class);
+            }
+
         } else {
-            /** Si es profesor mostramos solo USER */
-            return userRepository.findByRolesIn(pageable, Arrays.asList(roleHelper.getUser()));
+            /** Si es admin, mostramos todos */
+            if(roleHelper.isAdmin(actualUser)) {
+                return userRepository.findBy(pageable, IUser.class);
+            } else {
+                /** Si es profesor mostramos solo USER */
+                return userRepository.findByRolesIn(pageable, Arrays.asList(roleHelper.getUser()));
+            }
         }
-
-    }
-    public Page<IUser> getUsersPerClass(PageRequest pageable, Long idClass) {
-
-        /** Comprobamos que sea, mínimo profesor */
-        User actualUser = this.getActualUser();
-        if(!roleHelper.can(actualUser.getRoles(),"ROLE_TEACHER")) {
-            throw new  NotAuthorization("obtener usuarios");
-        }
-        /** Comprobamos que exista la clase*/
-        ClassRoom classRoom = classRepository.findById(idClass)
-                .orElseThrow(() -> new ErrorNotFound("clase", idClass));
-
-        /** Comprobamos que sea ADMIN o profesor de la clase en cuestion */
-        if (!roleHelper.isAdmin(actualUser) && !classRoom.getTeachers().stream().anyMatch(t -> t.getId() == actualUser.getId())) {
-            throw new NotAuthorization("obtener alumnos de la clase " + idClass);
-        }
-
-        return userRepository.findByClassRoomsIn(pageable, Arrays.asList(classRoom) , IUser.class);
     }
 }

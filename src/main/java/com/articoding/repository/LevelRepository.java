@@ -15,6 +15,6 @@ public interface LevelRepository extends JpaRepository<Level, Long> {
     <T> T findById(Long id, Class<T> type);
     <T> Page<T> findBy(Pageable pageable, Class<T> type);
     <T> Page<T> findByOwnerAndActiveTrue(User owner, Pageable pageable, Class<T> type);
-
-    <T> List<T> findByClassRooms(ClassRoom classRoom, Class<T> type);
+    <T> Page<T> findByClassRoomsAndActiveTrue(ClassRoom classRoom, Pageable pageable,Class<T> type);
+    <T> List<T> findByClassRoomsAndActiveTrue(ClassRoom classRoom, Class<T> type);
 }

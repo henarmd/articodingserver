@@ -2,17 +2,15 @@ package com.articoding.controller;
 
 import com.articoding.model.UserForm;
 import com.articoding.model.in.IUser;
-import com.articoding.model.in.IClassRoom;
 import com.articoding.model.rest.CreatedRef;
-import com.articoding.service.ClassService;
 import com.articoding.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 
@@ -23,25 +21,15 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    ClassService classService;
-
     @GetMapping
-    public Page<IUser> getUsers(@RequestParam(name = "page", defaultValue = "0") int page,
-                                @RequestParam(name = "size", defaultValue = "10") int size,
-                                @RequestParam(name = "clase", required=false) Optional<Long> clase) throws Exception {
-        if(clase.isPresent()) {
-            Page<IUser> resultPage = userService.getUsersPerClass(PageRequest.of(page, size),clase.get());
-            return resultPage;
-        } else {
-            Page<IUser> resultPage = userService.getUsers(PageRequest.of(page, size));
-            return resultPage;
-        }
+    public ResponseEntity<Page<IUser>> getUsers(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "class", required=false) Optional<Long> clase,
+            @RequestParam(name = "teacher", defaultValue = "false") boolean teacher) throws Exception {
 
-    }
-    @GetMapping(value = "/{userId}/classes")
-    public List<IClassRoom> getUsers(@PathVariable(value="userId") Long userId) {
-        return classService.getUserClasses(userId);
+        return ResponseEntity.ok(userService.geAllUser(PageRequest.of(page,size), clase, teacher));
+
     }
 
     @PostMapping

@@ -16,11 +16,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LevelService {
@@ -30,7 +32,8 @@ public class LevelService {
 
     @Autowired
     ClassRepository classRepository;
-
+    @Autowired
+    UserService userService;
     @Autowired
     RoleHelper roleHelper;
 
@@ -114,12 +117,38 @@ public class LevelService {
 
     }
 
-    public Page<ILevel> getLevels(User actualUser, Pageable pageable) {
-        /** Si es ADMIN devuelve todos */
-        if(roleHelper.isAdmin(actualUser)) {
-            return levelRepository.findBy(pageable, ILevel.class);
+    public Page<ILevel> getLevels(PageRequest pageRequest, Optional<Long> classId, Optional<Long> userId) {
+        User actualUser = userService.getActualUser();
+        /** Si quiere todos los niveles de una clase*/
+        if(classId.isPresent()) {
+            /** Comrpobamos que exista la clase*/
+            ClassRoom classRoom = classRepository.findById(classId.get())
+                    .orElseThrow(() -> new ErrorNotFound("clase", classId.get()));
+
+            /**comprobamos que es su alumno/profesor o tiene role admin*/
+            if(!roleHelper.isAdmin(actualUser)) {
+                if (!classRoom.getStudents().stream().anyMatch(s -> s.getId() == actualUser.getId()) &&
+                        !classRoom.getTeachers().stream().anyMatch(s -> s.getId() == actualUser.getId())) {
+                    throw new NotAuthorization("ver niveles de la clase " + classId.get());
+                }
+            }
+            return levelRepository.findByClassRoomsAndActiveTrue(classRoom, pageRequest, ILevel.class);
+        } else if (userId.isPresent()) {
+            /** Si quiere todos los niveles de un usuario, comprobamos que sea ADMIN */
+            if(!roleHelper.isAdmin(actualUser)) {
+                throw new NotAuthorization("ver niveles del usuario " + userId.get());
+            } else {
+                return levelRepository.findByOwnerAndActiveTrue(actualUser, pageRequest, ILevel.class);
+            }
         } else {
-            return levelRepository.findByOwnerAndActiveTrue(actualUser, pageable, ILevel.class);
+            /** Si quiere todos los niveles*/
+            if(roleHelper.isAdmin(actualUser)) {
+                /** Si es admin devuelve todos*/
+                return levelRepository.findBy(pageRequest, ILevel.class);
+            } else {
+                /**Si no, devuelve los creados por el usuario*/
+                return levelRepository.findByOwnerAndActiveTrue(actualUser, pageRequest, ILevel.class);
+            }
         }
-    }
+     }
 }

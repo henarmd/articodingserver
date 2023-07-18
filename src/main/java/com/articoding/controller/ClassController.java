@@ -7,9 +7,12 @@ import com.articoding.model.in.ILevel;
 import com.articoding.service.ClassService;
 import com.articoding.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/classes")
@@ -25,17 +28,17 @@ public class ClassController {
     }
 
     @GetMapping
-    public ResponseEntity<List<IClassRoom>> getAllClass(@RequestParam(defaultValue = "true") boolean student){
-        return ResponseEntity.ok(classService.getAllClassesPerUser(userService.getActualUser(), student));
+    public ResponseEntity<Page<IClassRoom>> getAllClass(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "user", required=false) Optional<Long> userId,
+            @RequestParam(name = "teacher", required=false) Optional<Long> teachId,
+            @RequestParam(name = "level",required=false) Optional<Long> levelId){
+        return ResponseEntity.ok(classService.getClasses(PageRequest.of(page, size), userId, teachId, levelId));
     }
 
     @GetMapping("/{classId}")
     public ResponseEntity<IClassRoom> getById(@PathVariable(value="classId") Long classId){
-        return ResponseEntity.ok(classService.getById(userService.getActualUser(), classId));
-    }
-
-    @GetMapping("/{classId}/levels")
-    public ResponseEntity<List<ILevel>> getClass(@PathVariable(value="classId") Long classId){
-        return ResponseEntity.ok(classService.getAllLevels(userService.getActualUser(), classId));
+        return ResponseEntity.ok(classService.getById(classId));
     }
 }
