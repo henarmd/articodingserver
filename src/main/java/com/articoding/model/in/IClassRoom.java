@@ -12,4 +12,8 @@ public interface IClassRoom {
     List<IUser> getTeachers();
     @Value("#{target.students.size()}")
     String getStudents();
+    @Value("#{target.levels.size()}")
+    String getLevels();
+
+    public boolean isEnabled();
 }

@@ -77,6 +77,10 @@ public class RoleHelper {
         return actualUser.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_TEACHER"));
     }
 
+    public boolean isUser(User actualUser) {
+        return actualUser.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_USER"));
+    }
+
     public Role getAdmin() {
         return roleRepository.findByName("ROLE_ADMIN");
     }

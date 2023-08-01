@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public interface ILevel {
 
+    public Integer getId();
+
     String getTitle();
 
     String getDescription();
@@ -17,6 +19,8 @@ public interface ILevel {
 
     @Value("#{target.classRooms.size()}")
     int getClassRooms();
+
+    public boolean isActive();
 
     IUser getOwner();
     @JsonIgnore

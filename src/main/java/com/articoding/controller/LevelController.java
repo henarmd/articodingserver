@@ -1,5 +1,6 @@
 package com.articoding.controller;
 
+import com.articoding.model.in.UpdateLevelForm;
 import com.articoding.model.rest.CreatedRef;
 import com.articoding.model.in.ILevel;
 import com.articoding.model.in.LevelForm;
@@ -43,5 +44,9 @@ public class LevelController {
             ) throws Exception {
         return ResponseEntity.ok(levelService.getLevels(PageRequest.of(page, size), classId, userId));
     }
-
+    @PutMapping("/{levelId}")
+    public ResponseEntity<CreatedRef> updateLevel(@RequestBody UpdateLevelForm levelForm,
+                                           @PathVariable(value="levelId") Long levelId) throws Exception {
+        return ResponseEntity.ok(new CreatedRef("levels/" + levelService.updateLevel(levelForm, levelId)));
+    }
 }

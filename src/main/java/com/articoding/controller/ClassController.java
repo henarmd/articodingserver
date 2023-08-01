@@ -3,7 +3,6 @@ package com.articoding.controller;
 import com.articoding.model.ClassRoom;
 import com.articoding.model.in.ClassForm;
 import com.articoding.model.in.IClassRoom;
-import com.articoding.model.in.ILevel;
 import com.articoding.service.ClassService;
 import com.articoding.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import java.util.Optional;
 
 @RestController

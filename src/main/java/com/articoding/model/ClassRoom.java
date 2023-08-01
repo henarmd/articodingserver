@@ -46,6 +46,9 @@ public class ClassRoom {
 
     String name;
 
+    @Column
+    private boolean enabled = true;
+
     public ClassRoom() {
 
     }
@@ -96,6 +99,14 @@ public class ClassRoom {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
 

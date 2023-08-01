@@ -9,6 +9,7 @@ import com.articoding.model.Level;
 import com.articoding.model.User;
 import com.articoding.model.in.ILevel;
 import com.articoding.model.in.LevelForm;
+import com.articoding.model.in.UpdateLevelForm;
 import com.articoding.repository.ClassRepository;
 import com.articoding.repository.LevelRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -151,4 +152,34 @@ public class LevelService {
             }
         }
      }
+
+    public long updateLevel(UpdateLevelForm newLevel, Long levelId) {
+        /** Comprobamos que existe el nivel */
+        Level levelOld = levelRepository.findById(levelId)
+                .orElseThrow(() -> new ErrorNotFound("level", levelId));
+
+        User actualUser = userService.getActualUser();
+        /** Comprobamos que sea el dueñó del nivel o usuario ADMIN */
+        if (!actualUser.getCreatedLevels().stream().anyMatch(x -> x.getId() == levelId) &&
+                !roleHelper.isAdmin(actualUser)) {
+            throw new NotAuthorization("modificar el nivel " + levelId);
+        } else {
+            /** Podemos modificar */
+            if (newLevel.getTitle() != null ) {
+                levelOld.setTitle(newLevel.getTitle());
+            }
+            if (newLevel.getDescription() != null ) {
+                levelOld.setDescription(newLevel.getDescription());
+            }
+            if (newLevel.isPublicLevel() != null ) {
+                levelOld.setPublicLevel(newLevel.isPublicLevel());
+            }
+            if (newLevel.isActive() != null ) {
+                levelOld.setActive(newLevel.isActive());
+            }
+
+            return levelRepository.save(levelOld).getId();
+
+        }
+    }
 }

@@ -16,6 +16,8 @@ public class LevelForm {
 
     private boolean publicLevel;
 
+    public boolean active;
+
     public LevelForm() {
     }
 

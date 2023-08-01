@@ -3,11 +3,10 @@ package com.articoding.service;
 import com.articoding.RoleHelper;
 import com.articoding.error.ErrorNotFound;
 import com.articoding.error.NotAuthorization;
-import com.articoding.model.ClassRoom;
-import com.articoding.model.Role;
-import com.articoding.model.UserForm;
+import com.articoding.model.*;
 import com.articoding.model.in.IUser;
-import com.articoding.model.User;
+import com.articoding.model.in.IUserDetail;
+import com.articoding.model.in.UpdateUserForm;
 import com.articoding.repository.ClassRepository;
 import com.articoding.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +135,52 @@ public class UserService {
                 /** Si es profesor mostramos solo USER */
                 return userRepository.findByRolesIn(pageable, Arrays.asList(roleHelper.getUser()));
             }
+        }
+    }
+
+    public IUserDetail getUser(Long userId) {
+        User actualUser = this.getActualUser();
+        /** Comprobamos que sea, mínimo profesor */
+        if(!roleHelper.can(actualUser.getRoles(),"ROLE_TEACHER")) {
+            throw new  NotAuthorization("obtener usuario");
+        }
+
+        /** Comprobamos que existe */
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ErrorNotFound("clase", userId));
+
+        /** Si es solo profesor, nos aseguramos de que el usuario es alumno */
+        if(!roleHelper.isAdmin(actualUser)) {
+            if (!roleHelper.isUser(user)) {
+                throw new NotAuthorization("obtener usuario");
+            }
+        }
+
+        return userRepository.findById(userId, IUserDetail.class);
+    }
+
+    public Long update(Long userId, UpdateUserForm updateUserForm) {
+
+        /** Comprobamos que existe el usuario */
+        User userOld = userRepository.findById(userId)
+                .orElseThrow(() -> new ErrorNotFound("usuario", userId));
+
+        User actualUser = getActualUser();
+        /** Comprobamos que sea el propio usuario o usuario ADMIN */
+        if (!(actualUser.getId() == userId) &&
+                !roleHelper.isAdmin(actualUser)) {
+            throw new NotAuthorization("modificar el usuario " + userId);
+        } else {
+            /** Podemos modificar */
+            if (updateUserForm.getPassword() != null ) {
+                userOld.setPassword(bcryptEncoder.encode(updateUserForm.getPassword()));
+            }
+            if (updateUserForm.isEnabled() != null ) {
+                userOld.setEnabled(updateUserForm.isEnabled());
+            }
+
+            return userRepository.save(userOld).getId();
+
         }
     }
 }

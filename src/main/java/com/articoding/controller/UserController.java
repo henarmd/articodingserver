@@ -1,7 +1,10 @@
 package com.articoding.controller;
 
 import com.articoding.model.UserForm;
+import com.articoding.model.in.ILevel;
 import com.articoding.model.in.IUser;
+import com.articoding.model.in.IUserDetail;
+import com.articoding.model.in.UpdateUserForm;
 import com.articoding.model.rest.CreatedRef;
 import com.articoding.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,11 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<IUserDetail> getUser(@PathVariable(value="userId") Long userId) throws Exception {
+        return ResponseEntity.ok(userService.getUser(userId));
+    }
+
     @GetMapping
     public ResponseEntity<Page<IUser>> getUsers(
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -36,5 +44,12 @@ public class UserController {
     public ResponseEntity<CreatedRef> saveUser(@RequestBody UserForm user) throws Exception {
         return ResponseEntity.ok(new CreatedRef("users/" +userService.save(user)));
     }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<CreatedRef> updateUser(@PathVariable(value="userId") Long userId,
+                                                  @RequestBody UpdateUserForm updateUserForm) throws Exception {
+        return ResponseEntity.ok(new CreatedRef("users/" + userService.update(userId, updateUserForm)));
+    }
+
 
 }

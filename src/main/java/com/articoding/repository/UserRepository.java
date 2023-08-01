@@ -24,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	<T> Page<T> findByOwnerClassRoomsIn(Pageable pageable, List<ClassRoom> classRooms,Class<T> type);
 
 	<T> Page<T> findBy(Pageable pageable, Class<T> type);
+
+	<T> T findById(Long id, Class<T> type);
 }
