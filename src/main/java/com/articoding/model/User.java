@@ -18,7 +18,7 @@ public class User {
 	private String password;
 
 	@Column
-	private boolean enabled;
+	private boolean enabled = true;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Valoration> valorationList;

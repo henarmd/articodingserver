@@ -88,8 +88,8 @@ public class LevelService {
             throw new ErrorNotFound("nivel", levelId);
         }
 
-        if(!level.isActive()) {
-            throw new DisabledEntity("nivel");
+        if(!level.isActive() && !roleHelper.isAdmin(actualUser) && !(roleHelper.isTeacher(actualUser) && level.getOwner().getId() == actualUser.getId() )) {
+            throw new NotAuthorization("nivel desactivado");
         }
         boolean canShow = false;
         /** Comprobamos si tiene permisos para verlo*/
