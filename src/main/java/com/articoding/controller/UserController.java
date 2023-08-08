@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -41,6 +42,12 @@ public class UserController {
     @PostMapping
     public ResponseEntity<CreatedRef> saveUser(@RequestBody UserForm user) throws Exception {
         return ResponseEntity.ok(new CreatedRef("users/" +userService.save(user)));
+    }
+
+    @PostMapping("/list")
+    public ResponseEntity<CreatedRef> saveUsers(@RequestBody List<UserForm> users) throws Exception {
+        userService.saveAll(users);
+        return ResponseEntity.ok(new CreatedRef("users"));
     }
 
     @PutMapping("/{userId}")

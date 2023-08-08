@@ -50,6 +50,14 @@ public class UserService {
             throw new  NotAuthorization("crear usuarios");
         }
 
+        User newUser = prepareUser(user, actualUser);
+
+        User createdUser = userRepository.save(newUser);
+
+        return createdUser.getId();
+    }
+
+    private User prepareUser(UserForm user, User actualUser) {
         User newUser = new User();
         newUser.setUsername(user.getUsername());
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
@@ -74,7 +82,7 @@ public class UserService {
                     } else {
                         throw new NotAuthorization("crear usuarios PROFESOR");
                     }
-                }break;
+                } break;
 
                 case "ROLE_USER": {newRole = roleHelper.getUser();} break;
 
@@ -98,12 +106,21 @@ public class UserService {
             classRoomList.add(classRoom);
         }
         newUser.setClasses(classRoomList);
-
-        User createdUser = userRepository.save(newUser);
-
-        return createdUser.getId();
+        return newUser;
     }
 
+    public void saveAll(List<UserForm> userFormList) {
+        /** Comprobamos que sea, mínimo profesor */
+        User actualUser = this.getActualUser();
+        if(!roleHelper.can(actualUser.getRoles(),"ROLE_TEACHER")) {
+            throw new  NotAuthorization("crear usuarios");
+        }
+        List<User> usersList = new ArrayList<>();
+
+        userFormList.forEach(u -> usersList.add(prepareUser(u, actualUser)));
+
+        userRepository.saveAll(usersList);
+    }
     public Page<IUser> geAllUser(PageRequest pageable, Optional<Long> clase, boolean teacher) {
         User actualUser = this.getActualUser();
         /** Comprobamos que sea, mínimo profesor */
