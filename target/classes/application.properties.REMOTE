@@ -1,0 +1,6 @@
+jwt.secret=javainuse
+spring.datasource.url=jdbc:mysql://articodingserverdb.cs04u7ufhwfh.eu-north-1.rds.amazonaws.com:3306/articoding
+spring.datasource.username=root
+spring.datasource.password=Articoding2023
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update

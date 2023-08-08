@@ -49,4 +49,5 @@ public class LevelController {
                                            @PathVariable(value="levelId") Long levelId) throws Exception {
         return ResponseEntity.ok(new CreatedRef("levels/" + levelService.updateLevel(levelForm, levelId)));
     }
+
 }

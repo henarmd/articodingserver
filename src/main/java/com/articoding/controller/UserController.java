@@ -1,7 +1,6 @@
 package com.articoding.controller;
 
 import com.articoding.model.UserForm;
-import com.articoding.model.in.ILevel;
 import com.articoding.model.in.IUser;
 import com.articoding.model.in.IUserDetail;
 import com.articoding.model.in.UpdateUserForm;
@@ -10,7 +9,6 @@ import com.articoding.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

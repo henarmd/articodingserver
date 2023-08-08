@@ -4,24 +4,21 @@ import com.articoding.RoleHelper;
 import com.articoding.error.ErrorNotFound;
 import com.articoding.error.NotAuthorization;
 import com.articoding.model.ClassRoom;
+import com.articoding.model.Level;
 import com.articoding.model.User;
-import com.articoding.model.in.ClassForm;
-import com.articoding.model.in.IClassRoom;
-import com.articoding.model.in.ILevel;
+import com.articoding.model.in.*;
 import com.articoding.repository.ClassRepository;
 import com.articoding.repository.LevelRepository;
 import com.articoding.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ClassService {
@@ -81,8 +78,8 @@ public class ClassService {
 
     }
 
+    public IClassRoomDetail getById(Long classId) {
 
-    public IClassRoom getById(Long classId) {
         User actualUser = userService.getActualUser();
         /** Comprobamos que existe la clase */
         ClassRoom classRoom = classRepository.findById(classId)
@@ -92,7 +89,7 @@ public class ClassService {
                 !classRoom.getTeachers().stream().anyMatch(t-> t.getId() == actualUser.getId())) {
             throw new NotAuthorization("acceder a la clase con id " + classId);
         }
-        return classRepository.findById(classId, IClassRoom.class);
+        return classRepository.findById(classId, IClassRoomDetail.class);
     }
 
     public Page<IClassRoom> getClasses(PageRequest pageRequest, Optional<Long> userId, Optional<Long> teachId, Optional<Long> levelId) {
@@ -122,6 +119,79 @@ public class ClassService {
                 return classRepository.findByStudentsId(actualUser.getId(),pageRequest, IClassRoom.class);
             }
         }
+    }
 
+    public Long updateClassRoom(Long classId, UpdateClassRoomForm updateClassRoomForm) {
+
+        ClassRoom classRoom = canEdit(classId);
+
+        /** Se modifican los campos informados*/
+        if (updateClassRoomForm.getName() != null) {
+            classRoom.setName(updateClassRoomForm.getName());
+        }
+
+        if (updateClassRoomForm.getDescription() != null) {
+            classRoom.setDescription(updateClassRoomForm.getDescription());
+        }
+
+        if (updateClassRoomForm.isEnabled() != null) {
+            classRoom.setEnabled(updateClassRoomForm.isEnabled());
+        }
+
+        classRepository.save(classRoom);
+        return  classRoom.getId();
+    }
+
+    public Long addLevel(Long classId, List<IUid> levelsId) {
+        ClassRoom classRoom = canEdit(classId);
+
+        for(IUid levelId : levelsId ){
+            Level level = levelRepository.findById(levelId.getId()).
+                    orElseThrow(() -> new ErrorNotFound("Nivel", levelId.getId()));
+            /** Si ya es parte de la clase no hago nada*/
+            if(classRoom.getLevels().stream().anyMatch(level1 -> level1.getId() == level.getId())) {
+                return classId;
+            }
+
+            level.getClassRooms().add(classRoom);
+            classRoom.getLevels().add(level);
+        }
+
+        classRepository.save(classRoom);
+
+        return classRoom.getId();
+    }
+
+    public Long deleteLevel(Long classId, Long levelId) {
+        ClassRoom classRoom = canEdit(classId);
+
+        Level level = levelRepository.findById(levelId).
+                orElseThrow(() -> new ErrorNotFound("Nivel", levelId));
+        /** Si no es parte de la clase no hago nada*/
+        if(!classRoom.getLevels().stream().anyMatch(level1 -> level1.getId() == level.getId())) {
+            return classId;
+        }
+
+        List<Level> actualLevels = classRoom.getLevels().stream().filter(level1 -> level1.getId() != level.getId()).collect(Collectors.toList());
+        classRoom.setLevels(actualLevels);
+        classRepository.save(classRoom);
+
+        return classRoom.getId();
+    }
+
+    private ClassRoom canEdit(Long classId){
+
+        User actualUser = userService.getActualUser();
+
+        /** Obtenemos la vieja clase*/
+        ClassRoom classRoom = classRepository.findById(classId).
+                orElseThrow(() -> new ErrorNotFound("clase", classId ));
+
+        /** Se verifica si es admin o profesor de la clase*/
+        if(!roleHelper.isAdmin(actualUser) && !classRoom.getTeachers().stream().anyMatch(t -> t.getId() == classId)) {
+            throw new NotAuthorization("Modificar la clase " + classId);
+        }
+
+        return classRoom;
     }
 }
