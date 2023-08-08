@@ -3,6 +3,7 @@ package com.articoding.service;
 import com.articoding.RoleHelper;
 import com.articoding.error.ErrorNotFound;
 import com.articoding.error.NotAuthorization;
+import com.articoding.error.RestError;
 import com.articoding.model.ClassRoom;
 import com.articoding.model.Level;
 import com.articoding.model.User;
@@ -37,10 +38,11 @@ public class ClassService {
     @Autowired
     RoleHelper roleHelper;
 
-    public ClassRoom createClass(User actualUser, ClassForm classForm) {
+    public Long createClass(ClassForm classForm) {
+        User actualUser = userService.getActualUser();
 
         /** Comprobamos que sea profesor */
-        if(!roleHelper.isTeacher(actualUser)) {
+        if(!roleHelper.isTeacher(actualUser) && !roleHelper.isAdmin(actualUser)) {
             throw new NotAuthorization("Sin el role teacher no se pueden crear clases");
         }
 
@@ -74,7 +76,9 @@ public class ClassService {
         teachers.add(actualUser);
         newClassRoom.setTeachers(teachers);
 
-        return classRepository.save(newClassRoom);
+        newClassRoom.setEnabled(classForm.isEnabled());
+
+        return classRepository.save(newClassRoom).getId();
 
     }
 
@@ -179,6 +183,83 @@ public class ClassService {
         return classRoom.getId();
     }
 
+    public Long addStudents(Long classId, List<IUid> usersId) {
+        ClassRoom classRoom = canEdit(classId);
+
+        for(IUid userId : usersId ){
+            User student = userRepository.findById(userId.getId()).
+                    orElseThrow(() -> new ErrorNotFound("Estudiante", userId.getId()));
+            /** Si ya es parte de la clase no hago nada*/
+            if(classRoom.getStudents().stream().anyMatch(level1 -> level1.getId() == student.getId())) {
+                return classId;
+            }
+
+            student.getClasses().add(classRoom);
+            classRoom.getStudents().add(student);
+        }
+
+        classRepository.save(classRoom);
+
+        return classRoom.getId();
+    }
+
+    public Long deleteStudent(Long classId, Long userId) {
+        ClassRoom classRoom = canEdit(classId);
+
+        User student = userRepository.findById(userId).
+                orElseThrow(() -> new ErrorNotFound("Estudiante", userId));
+        /** Si no es parte de la clase no hago nada*/
+        if(!classRoom.getStudents().stream().anyMatch(level1 -> level1.getId() == student.getId())) {
+            return classId;
+        }
+
+        List<User> actualStudents = classRoom.getStudents().stream().filter(user -> user.getId() != student.getId()).collect(Collectors.toList());
+        classRoom.setStudents(actualStudents);
+        classRepository.save(classRoom);
+
+        return classRoom.getId();
+    }
+
+    public Long addTeachers(Long classId, List<IUid> usersId) {
+        ClassRoom classRoom = canEdit(classId);
+
+        for(IUid userId : usersId ){
+            User teacher = userRepository.findById(userId.getId()).
+                    orElseThrow(() -> new ErrorNotFound("Profesor", userId.getId()));
+            /** Si ya es parte de la clase no hago nada*/
+            if(classRoom.getTeachers().stream().anyMatch(level1 -> level1.getId() == teacher.getId())) {
+                return classId;
+            }
+            if(!roleHelper.isTeacher(teacher)) {
+                throw new RestError("El usuario con id " + userId.getId() + " no tiene el rol profesor");
+            }
+            teacher.getClasses().add(classRoom);
+            classRoom.getTeachers().add(teacher);
+        }
+
+        classRepository.save(classRoom);
+
+        return classRoom.getId();
+    }
+
+    public Long deleteTeacher(Long classId, Long userId) {
+        ClassRoom classRoom = canEdit(classId);
+
+        User teacher = userRepository.findById(userId).
+                orElseThrow(() -> new ErrorNotFound("Profesor", userId));
+
+        /** Si no es parte de la clase no hago nada*/
+        if(!classRoom.getTeachers().stream().anyMatch(level1 -> level1.getId() == teacher.getId())) {
+            return classId;
+        }
+
+        List<User> actualTeacher = classRoom.getTeachers().stream().filter(user -> user.getId() != teacher.getId()).collect(Collectors.toList());
+        classRoom.setTeachers(actualTeacher);
+        classRepository.save(classRoom);
+
+        return classRoom.getId();
+    }
+
     private ClassRoom canEdit(Long classId){
 
         User actualUser = userService.getActualUser();
@@ -194,4 +275,6 @@ public class ClassService {
 
         return classRoom;
     }
+
+
 }

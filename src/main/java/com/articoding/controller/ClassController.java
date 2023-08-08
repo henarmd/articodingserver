@@ -23,8 +23,8 @@ public class ClassController {
     UserService userService;
 
     @PostMapping
-    public ResponseEntity<ClassRoom> createClass(@RequestBody ClassForm classForm) throws Exception {
-        return ResponseEntity.ok(classService.createClass(userService.getActualUser(), classForm));
+    public ResponseEntity<CreatedRef> createClass(@RequestBody ClassForm classForm) throws Exception {
+        return ResponseEntity.ok(new CreatedRef("classes/" + classService.createClass(classForm)));
     }
 
     @GetMapping
@@ -48,6 +48,7 @@ public class ClassController {
         return ResponseEntity.ok(new CreatedRef("classes/" + classService.updateClassRoom(classId, updateClassRoomForm)));
     }
 
+
     @PostMapping("/{classId}/levels")
     public ResponseEntity<CreatedRef> addLevelToClass(@PathVariable(value="classId") Long classId ,
                                                       @RequestBody List<IUid> levelId) {
@@ -57,5 +58,27 @@ public class ClassController {
     public ResponseEntity<CreatedRef> deleteLevelOfClass(@PathVariable(value="classId") Long classId ,
                                                          @PathVariable(value="levelId") Long levelId ) {
         return ResponseEntity.ok(new CreatedRef("classes/" + classService.deleteLevel(classId, levelId)));
+    }
+
+    @PostMapping("/{classId}/students")
+    public ResponseEntity<CreatedRef> addStudentsToClass(@PathVariable(value="classId") Long classId ,
+                                                      @RequestBody List<IUid> usersId) {
+        return ResponseEntity.ok(new CreatedRef("classes/" + classService.addStudents(classId, usersId)));
+    }
+    @DeleteMapping("/{classId}/students/{studentId}")
+    public ResponseEntity<CreatedRef> deleteStudentOfClass(@PathVariable(value="classId") Long classId ,
+                                                         @PathVariable(value="studentId") Long studentId ) {
+        return ResponseEntity.ok(new CreatedRef("classes/" + classService.deleteStudent(classId, studentId)));
+    }
+
+    @PostMapping("/{classId}/teachers")
+    public ResponseEntity<CreatedRef> addTeachersToClass(@PathVariable(value="classId") Long classId ,
+                                                         @RequestBody List<IUid> usersId) {
+        return ResponseEntity.ok(new CreatedRef("classes/" + classService.addTeachers(classId, usersId)));
+    }
+    @DeleteMapping("/{classId}/teachers/{teacherId}")
+    public ResponseEntity<CreatedRef> deleteTeacherOfClass(@PathVariable(value="classId") Long classId ,
+                                                           @PathVariable(value="teacherId") Long teacherId ) {
+        return ResponseEntity.ok(new CreatedRef("classes/" + classService.deleteTeacher(classId, teacherId)));
     }
 }

@@ -12,6 +12,8 @@ public class ClassForm {
 
     String description;
 
+    boolean enabled;
+
     public ClassForm() {
     }
 
@@ -45,5 +47,13 @@ public class ClassForm {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

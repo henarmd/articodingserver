@@ -18,7 +18,7 @@ public class RestResponseEntityExceptionHandler
     protected ResponseEntity<Object> authorizationError(
             RuntimeException ex, WebRequest request) {
         RestError restError = (RestError)ex;
-        return new ResponseEntity<>(new ErrorMessage(restError.getRestMesssage(), 1), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorMessage(restError.getRestMesssage(), 1), HttpStatus.FORBIDDEN);
     }
 
 
@@ -36,5 +36,13 @@ public class RestResponseEntityExceptionHandler
             RuntimeException ex, WebRequest request) {
         RestError restError = (RestError)ex;
         return new ResponseEntity<>(new ErrorMessage(restError.getRestMesssage(), 1), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(value
+            = { RestError.class })
+    protected ResponseEntity<Object> generyc(
+            RuntimeException ex, WebRequest request) {
+        RestError restError = (RestError)ex;
+        return new ResponseEntity<>(new ErrorMessage(restError.getRestMesssage(), 1), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
