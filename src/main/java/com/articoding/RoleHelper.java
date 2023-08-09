@@ -6,6 +6,7 @@ import com.articoding.model.User;
 import com.articoding.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class RoleHelper {
         List<Role> roles = new ArrayList<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<SimpleGrantedAuthority> privileges = (List<SimpleGrantedAuthority>) authentication.getAuthorities();
-        List<String> actualUserRoles = privileges.stream().map(simpleGrantedAuthority -> simpleGrantedAuthority.getAuthority()).collect(Collectors.toList());
+        List<String> actualUserRoles = privileges.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         if (actualUserRoles.contains("ROLE_ADMIN")) {
             roles.add(this.roleRepository.findByName("ROLE_ADMIN"));
             roles.add(this.roleRepository.findByName("ROLE_TEACHER"));
@@ -39,46 +40,32 @@ public class RoleHelper {
         return roles;
     }
 
-    public Role getMaxRole(List<Role> roles) {
-        if (roles.stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN"))) {
-           return roles.stream().filter(r -> r.getName().equals("ROLE_ADMIN")).findFirst().get();
-        } else if  (roles.stream().anyMatch(r -> r.getName().equals("ROLE_TEACHER"))) {
-            return roles.stream().filter(r -> r.getName().equals("ROLE_TEACHER")).findFirst().get();
-        } else if (roles.stream().anyMatch(r -> r.getName().equals("ROLE_USER"))) {
-            return roles.stream().filter(r -> r.getName().equals("ROLE_USER")).findFirst().get();
-        } else {
-            throw new RuntimeException("Esto es raro...");
-        }
-    }
-
     public boolean isAdmin(User user) {
-        return user.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN"));
+        return user.getRole().getName().equals("ROLE_ADMIN");
     }
-    public boolean can(List<Role> roles, String necesaryRoot) {
+    public boolean can(Role roles, String necesaryRoot) {
 
         if (necesaryRoot.equals("ROLE_ADMIN")) {
-            return roles.stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN"));
+            return roles.getName().equals("ROLE_ADMIN");
         }
         if (necesaryRoot.equals("ROLE_TEACHER")) {
-            return roles.stream().anyMatch(r ->
-                    r.getName().equals("ROLE_ADMIN") ||
-                            r.getName().equals("ROLE_TEACHER"));
+            return roles.getName().equals("ROLE_ADMIN") ||
+                    roles.getName().equals("ROLE_TEACHER");
         }
         if (necesaryRoot.equals("ROLE_USER")) {
-            return roles.stream().anyMatch(r ->
-                    r.getName().equals("ROLE_ADMIN") ||
-                            r.getName().equals("ROLE_TEACHER") ||
-                            r.getName().equals("ROLE_USER")) ;
+            return roles.getName().equals("ROLE_ADMIN") ||
+                    roles.getName().equals("ROLE_TEACHER") ||
+                    roles.getName().equals("ROLE_USER") ;
         }
         return false;
     }
 
     public boolean isTeacher(User actualUser) {
-        return actualUser.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_TEACHER"));
+        return actualUser.getRole().getName().equals("ROLE_TEACHER");
     }
 
     public boolean isUser(User actualUser) {
-        return actualUser.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_USER"));
+        return actualUser.getRole().getName().equals("ROLE_USER");
     }
 
     public Role getAdmin() {

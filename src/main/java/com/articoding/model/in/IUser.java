@@ -2,6 +2,7 @@ package com.articoding.model.in;
 
 import com.articoding.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
@@ -15,9 +16,10 @@ public interface IUser {
 
     public boolean isEnabled();
     @JsonIgnore
-    public List<Role> getRoles();
+    public Role getRole();
 
+    @JsonProperty("role")
     default String getRol() {
-        return getRoles().stream().map(Role::getName).collect(Collectors.joining(", "));
+        return getRole().getName();
     }
 }

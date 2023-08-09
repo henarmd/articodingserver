@@ -100,7 +100,7 @@ public class ClassService {
         /** Si quiere saber las clases de un usuario o de un nivel, debe ser minimo profesor*/
         User actualUser = userService.getActualUser();
         if(userId.isPresent() || teachId.isPresent() || levelId.isPresent()) {
-            if(!roleHelper.can(actualUser.getRoles(), "ROLE_TEACHER")) {
+            if(!roleHelper.can(actualUser.getRole(), "ROLE_TEACHER")) {
                 throw new NotAuthorization("get class of user ");
             } else {/** Deveulvo las clases de las que es usuario o profesor */
                 if(userId.isPresent()) {

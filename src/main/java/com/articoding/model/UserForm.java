@@ -8,7 +8,7 @@ public class UserForm {
 
     private String password;
 
-    private List<String> roles;
+    private String role;
 
     private List<Long> classes;
 
@@ -28,12 +28,12 @@ public class UserForm {
         this.password = password;
     }
 
-    public List<String> getRoles() {
-        return roles;
+    public String getRole() {
+        return role;
     }
 
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
+    public void setRoles(String role) {
+        this.role = role;
     }
 
     public List<Long> getClasses() {

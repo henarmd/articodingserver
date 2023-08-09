@@ -11,7 +11,7 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@Column
+	@Column(unique=true)
 	private String username;
 	@Column
 	@JsonIgnore
@@ -29,15 +29,8 @@ public class User {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Level> createdLevels;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(
-			name = "users_roles",
-			joinColumns = @JoinColumn(
-					name = "user_id", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(
-					name = "role_id", referencedColumnName = "id")
-	)
-	private List<Role> roles;
+	@ManyToOne()
+	private Role role;
 
 	@ManyToMany(mappedBy = "students")
 	private List<ClassRoom> classRooms;
@@ -109,19 +102,35 @@ public class User {
 		this.password = password;
 	}
 
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
-
 	public boolean isEnabled() {
 		return enabled;
 	}
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public List<ClassRoom> getClassRooms() {
+		return classRooms;
+	}
+
+	public void setClassRooms(List<ClassRoom> classRooms) {
+		this.classRooms = classRooms;
+	}
+
+	public List<ClassRoom> getOwnerClassRooms() {
+		return ownerClassRooms;
+	}
+
+	public void setOwnerClassRooms(List<ClassRoom> ownerClassRooms) {
+		this.ownerClassRooms = ownerClassRooms;
 	}
 }

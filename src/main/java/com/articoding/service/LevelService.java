@@ -47,8 +47,8 @@ public class LevelService {
         if (!levelForm.getClasses().isEmpty()) {
             List<ClassRoom> classRoomList = new ArrayList<>();
             /** Comprobamos si es profesor */
-            if (!roleHelper.can(actualUser.getRoles(), "ROLE_TEACHER")) {
-                throw new NotAuthorization(roleHelper.getMaxRole(actualUser.getRoles()),
+            if (!roleHelper.can(actualUser.getRole(), "ROLE_TEACHER")) {
+                throw new NotAuthorization(actualUser.getRole(),
                         "crear un nivel en una clase");
             }
 
