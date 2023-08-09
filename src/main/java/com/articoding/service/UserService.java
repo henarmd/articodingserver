@@ -50,11 +50,6 @@ public class UserService {
             throw new  NotAuthorization("crear usuarios");
         }
 
-        /** Comprobamos que no exista un usuario con ese username */
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            throw new RestError("El usuario con nombre " + user.getUsername() + " ya existe.");
-        }
-
         User newUser = prepareUser(user, actualUser);
 
         User createdUser = userRepository.save(newUser);
@@ -67,6 +62,16 @@ public class UserService {
         newUser.setUsername(user.getUsername());
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
         newUser.setEnabled(true);
+
+        /** Comprobamos que no exista un usuario con ese username */
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+            throw new RestError("El usuario con nombre " + user.getUsername() + " ya existe.");
+        }
+
+        /** Comprobamos que el nombre sea correcto*/
+        if(!user.getUsername().matches("^[a-zA-Z0-9-_]+$")) {
+            throw new RestError("El nombre solo puede contener carácteres alfanumericos y '_' .");
+        }
 
         /** Añadimos los roles, comprobando que el usuario tiene permisos para asignarlos según su nivel */
             Role newRole = null;
@@ -95,7 +100,7 @@ public class UserService {
                 break;
 
                 default:
-                    throw new ErrorNotFound("role", -1L);
+                    throw new RestError("Los posibles roles son: ROLE_USER,ROLE_TEACHER,ROLE_ADMIN");
             }
         newUser.setRole(newRole);
 
