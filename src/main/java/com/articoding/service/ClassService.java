@@ -183,12 +183,18 @@ public class ClassService {
         return classRoom.getId();
     }
 
-    public Long addStudents(Long classId, List<IUid> usersId) {
+    public Long addStudents(Long classId, List<String> usersId) {
         ClassRoom classRoom = canEdit(classId);
 
-        for(IUid userId : usersId ){
-            User student = userRepository.findById(userId.getId()).
-                    orElseThrow(() -> new ErrorNotFound("Estudiante", userId.getId()));
+        for(String username : usersId ){
+            User student = userRepository.findByUsername(username);
+            if(student == null) {
+                throw new RestError("No existe ningun usuario con nombre " + username);
+            }
+            /** Verifico su rol */
+            if(!roleHelper.isUser(student)) {
+                throw  new RestError("El usuario " + username + " no es un alumno ");
+            }
             /** Si ya es parte de la clase no hago nada*/
             if(classRoom.getStudents().stream().anyMatch(level1 -> level1.getId() == student.getId())) {
                 return classId;
@@ -220,19 +226,25 @@ public class ClassService {
         return classRoom.getId();
     }
 
-    public Long addTeachers(Long classId, List<IUid> usersId) {
+    public Long addTeachers(Long classId, List<String> usersId) {
         ClassRoom classRoom = canEdit(classId);
 
-        for(IUid userId : usersId ){
-            User teacher = userRepository.findById(userId.getId()).
-                    orElseThrow(() -> new ErrorNotFound("Profesor", userId.getId()));
+        for(String username : usersId ){
+            User teacher = userRepository.findByUsername(username);
+            if(teacher == null) {
+                throw new RestError("No existe ningun usuario con nombre " + username);
+            }
+
+            /** Verifico su rol */
+            if(!roleHelper.isTeacher(teacher)) {
+                throw  new RestError("El usuario " + username + " no es un profesor ");
+            }
+
             /** Si ya es parte de la clase no hago nada*/
             if(classRoom.getTeachers().stream().anyMatch(level1 -> level1.getId() == teacher.getId())) {
                 return classId;
             }
-            if(!roleHelper.isTeacher(teacher)) {
-                throw new RestError("El usuario con id " + userId.getId() + " no tiene el rol profesor");
-            }
+
             teacher.getClasses().add(classRoom);
             classRoom.getTeachers().add(teacher);
         }

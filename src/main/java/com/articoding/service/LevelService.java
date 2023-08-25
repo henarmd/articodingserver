@@ -1,7 +1,6 @@
 package com.articoding.service;
 
 import com.articoding.RoleHelper;
-import com.articoding.error.DisabledEntity;
 import com.articoding.error.ErrorNotFound;
 import com.articoding.error.NotAuthorization;
 import com.articoding.model.ClassRoom;
@@ -18,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

@@ -1,7 +1,5 @@
 package com.articoding.error;
 
-import com.articoding.model.Role;
-
 public class RestError extends RuntimeException  {
 
     private final String restMesssage;

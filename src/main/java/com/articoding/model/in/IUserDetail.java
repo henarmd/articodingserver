@@ -10,7 +10,7 @@ public interface IUserDetail {
 
     public boolean isEnabled();
 
-    public List<IRole> getRole();
+    public IRole getRole();
 
     public List<ILevel> getCreatedLevels();
 

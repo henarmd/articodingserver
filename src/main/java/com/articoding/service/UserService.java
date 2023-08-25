@@ -106,6 +106,12 @@ public class UserService {
 
         /** Añadimos las clases, comprobando que el usuario es profesor de ellas*/
         List<ClassRoom> classRoomList = new ArrayList<>();
+
+        /** Si hay clases, comprobamos que sea alumno*/
+        if(!user.getClasses().isEmpty() && !roleHelper.isUser(newUser)){
+           throw new RestError("No se puede matricular en clases al alumno " + user.getUsername() + " con role " + user.getRole());
+        }
+
         for (Long idClass: user.getClasses()) {
             ClassRoom classRoom = classRepository.findById(idClass)
                     .orElseThrow(() -> new ErrorNotFound("clase", idClass));

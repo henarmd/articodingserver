@@ -1,7 +1,5 @@
 package com.articoding.model.articodingLevel;
 
-import java.util.List;
-
 public class ACCategoryData {
 
     private String categoryName;

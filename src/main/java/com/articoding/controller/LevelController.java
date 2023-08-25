@@ -31,7 +31,7 @@ public class LevelController {
     }
 
     @GetMapping("/{levelId}")
-    public ResponseEntity<ILevel> getLevel(@PathVariable(value="levelId") Long levelId) throws Exception {
+    public ResponseEntity<ILevel> getLevel(@PathVariable(value="levelId") Long levelId) {
         return ResponseEntity.ok(levelService.getLevel(userService.getActualUser(), levelId));
     }
 
@@ -41,12 +41,12 @@ public class LevelController {
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "class",required=false) Optional<Long> classId,
             @RequestParam(name = "user", required=false) Optional<Long> userId
-            ) throws Exception {
+            ) {
         return ResponseEntity.ok(levelService.getLevels(PageRequest.of(page, size), classId, userId));
     }
     @PutMapping("/{levelId}")
     public ResponseEntity<CreatedRef> updateLevel(@RequestBody UpdateLevelForm levelForm,
-                                           @PathVariable(value="levelId") Long levelId) throws Exception {
+                                           @PathVariable(value="levelId") Long levelId) {
         return ResponseEntity.ok(new CreatedRef("levels/" + levelService.updateLevel(levelForm, levelId)));
     }
 

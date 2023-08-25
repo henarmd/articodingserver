@@ -1,7 +1,5 @@
 package com.articoding.model.articodingLevel;
 
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
-
 import java.util.List;
 
 public class ACCategoryBlockInfo {

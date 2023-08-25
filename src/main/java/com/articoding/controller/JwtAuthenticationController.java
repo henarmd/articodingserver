@@ -19,6 +19,8 @@ import com.articoding.config.JwtTokenUtil;
 import com.articoding.model.JwtRequest;
 import com.articoding.model.JwtResponse;
 
+import java.util.stream.Collectors;
+
 @RestController
 @CrossOrigin
 public class JwtAuthenticationController {
@@ -41,7 +43,9 @@ public class JwtAuthenticationController {
 
 		final String token = jwtTokenUtil.generateToken(userDetails);
 
-		return ResponseEntity.ok(new JwtResponse(token));
+		return ResponseEntity.ok(new JwtResponse(token,
+				userDetails.getAuthorities().stream().collect(Collectors.toList()).get(0).toString()
+		));
 	}
 
 

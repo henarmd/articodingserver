@@ -1,7 +1,6 @@
 package com.articoding;
 
 import com.articoding.model.Role;
-import com.articoding.model.RoleType;
 import com.articoding.model.User;
 import com.articoding.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,5 @@
 package com.articoding.controller;
 
-import com.articoding.model.ClassRoom;
 import com.articoding.model.in.*;
 import com.articoding.model.rest.CreatedRef;
 import com.articoding.service.ClassService;
@@ -19,11 +18,9 @@ import java.util.Optional;
 public class ClassController {
     @Autowired
     ClassService classService;
-    @Autowired
-    UserService userService;
 
     @PostMapping
-    public ResponseEntity<CreatedRef> createClass(@RequestBody ClassForm classForm) throws Exception {
+    public ResponseEntity<CreatedRef> createClass(@RequestBody ClassForm classForm) {
         return ResponseEntity.ok(new CreatedRef("classes/" + classService.createClass(classForm)));
     }
 
@@ -62,7 +59,7 @@ public class ClassController {
 
     @PostMapping("/{classId}/students")
     public ResponseEntity<CreatedRef> addStudentsToClass(@PathVariable(value="classId") Long classId ,
-                                                      @RequestBody List<IUid> usersId) {
+                                                      @RequestBody List<String> usersId) {
         return ResponseEntity.ok(new CreatedRef("classes/" + classService.addStudents(classId, usersId)));
     }
     @DeleteMapping("/{classId}/students/{studentId}")
@@ -73,7 +70,7 @@ public class ClassController {
 
     @PostMapping("/{classId}/teachers")
     public ResponseEntity<CreatedRef> addTeachersToClass(@PathVariable(value="classId") Long classId ,
-                                                         @RequestBody List<IUid> usersId) {
+                                                         @RequestBody List<String> usersId) {
         return ResponseEntity.ok(new CreatedRef("classes/" + classService.addTeachers(classId, usersId)));
     }
     @DeleteMapping("/{classId}/teachers/{teacherId}")

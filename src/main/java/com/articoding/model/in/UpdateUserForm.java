@@ -1,9 +1,5 @@
 package com.articoding.model.in;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.Column;
-
 public class UpdateUserForm {
 
     private String password;

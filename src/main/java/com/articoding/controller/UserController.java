@@ -24,7 +24,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<IUserDetail> getUser(@PathVariable(value="userId") Long userId) throws Exception {
+    public ResponseEntity<IUserDetail> getUser(@PathVariable(value="userId") Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }
 
@@ -33,26 +33,26 @@ public class UserController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "class", required=false) Optional<Long> clase,
-            @RequestParam(name = "teacher", defaultValue = "false") boolean teacher) throws Exception {
+            @RequestParam(name = "teacher", defaultValue = "false") boolean teacher)  {
 
         return ResponseEntity.ok(userService.geAllUser(PageRequest.of(page,size), clase, teacher));
 
     }
 
     @PostMapping
-    public ResponseEntity<CreatedRef> saveUser(@RequestBody UserForm user) throws Exception {
+    public ResponseEntity<CreatedRef> saveUser(@RequestBody UserForm user) {
         return ResponseEntity.ok(new CreatedRef("users/" +userService.save(user)));
     }
 
     @PostMapping("/list")
-    public ResponseEntity<CreatedRef> saveUsers(@RequestBody List<UserForm> users) throws Exception {
+    public ResponseEntity<CreatedRef> saveUsers(@RequestBody List<UserForm> users)  {
         userService.saveAll(users);
         return ResponseEntity.ok(new CreatedRef("users"));
     }
 
     @PutMapping("/{userId}")
     public ResponseEntity<CreatedRef> updateUser(@PathVariable(value="userId") Long userId,
-                                                  @RequestBody UpdateUserForm updateUserForm) throws Exception {
+                                                  @RequestBody UpdateUserForm updateUserForm) {
         return ResponseEntity.ok(new CreatedRef("users/" + userService.update(userId, updateUserForm)));
     }
 

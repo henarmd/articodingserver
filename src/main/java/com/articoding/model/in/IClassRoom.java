@@ -15,5 +15,5 @@ public interface IClassRoom {
     @Value("#{target.levels.size()}")
     String getLevels();
 
-    public boolean isEnabled();
+    boolean isEnabled();
 }

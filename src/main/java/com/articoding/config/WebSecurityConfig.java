@@ -21,8 +21,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -68,8 +66,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.expressionHandler(webCustomSecurityExpressionHandler())
 
 				.antMatchers("/login").permitAll()
+				.antMatchers("/swagger-ui.html").permitAll()
 				// all other requests need to be authenticated and ADMIN
-				.antMatchers("/register").hasRole("ADMIN")
 
 				.antMatchers("/*").authenticated()
 				.and()
