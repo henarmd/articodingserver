@@ -266,6 +266,9 @@ public class ClassService {
         }
 
         List<User> actualTeacher = classRoom.getTeachers().stream().filter(user -> user.getId() != teacher.getId()).collect(Collectors.toList());
+        if (actualTeacher.isEmpty()) {
+            throw new RestError("Una clase no puede quedarse sin ningun profesor");
+        }
         classRoom.setTeachers(actualTeacher);
         classRepository.save(classRoom);
 
@@ -281,7 +284,7 @@ public class ClassService {
                 orElseThrow(() -> new ErrorNotFound("clase", classId ));
 
         /** Se verifica si es admin o profesor de la clase*/
-        if(!roleHelper.isAdmin(actualUser) && !classRoom.getTeachers().stream().anyMatch(t -> t.getId() == classId)) {
+        if(!roleHelper.isAdmin(actualUser) && !classRoom.getTeachers().stream().anyMatch(t -> t.getId() == actualUser.getId())) {
             throw new NotAuthorization("Modificar la clase " + classId);
         }
 
