@@ -116,7 +116,7 @@ public class LevelService {
 
     }
 
-    public Page<ILevel> getLevels(PageRequest pageRequest, Optional<Long> classId, Optional<Long> userId) {
+    public Page<ILevel> getLevels(PageRequest pageRequest, Optional<Long> classId, Optional<Long> userId, Optional<Boolean> publicLevels) {
         User actualUser = userService.getActualUser();
         /** Si quiere todos los niveles de una clase*/
         if(classId.isPresent()) {
@@ -140,14 +140,20 @@ public class LevelService {
                 return levelRepository.findByOwnerAndActiveTrue(actualUser, pageRequest, ILevel.class);
             }
         } else {
-            /** Si quiere todos los niveles*/
-            if(roleHelper.isAdmin(actualUser)) {
-                /** Si es admin devuelve todos*/
-                return levelRepository.findBy(pageRequest, ILevel.class);
+            if(publicLevels.isPresent()) {
+                /** Si quiere todos los niveles publicos*/
+                return levelRepository.findByPublicLevelTrue(pageRequest, ILevel.class);
             } else {
-                /**Si no, devuelve los creados por el usuario*/
-                return levelRepository.findByOwnerAndActiveTrue(actualUser, pageRequest, ILevel.class);
+                /** Si quiere todos los niveles*/
+                if(roleHelper.isAdmin(actualUser)) {
+                    /** Si es admin devuelve todos*/
+                    return levelRepository.findBy(pageRequest, ILevel.class);
+                } else {
+                    /**Si no, devuelve los creados por el usuario*/
+                    return levelRepository.findByOwnerAndActiveTrue(actualUser, pageRequest, ILevel.class);
+                }
             }
+
         }
      }
 

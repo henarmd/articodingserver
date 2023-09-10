@@ -1,11 +1,14 @@
 package com.articoding.model.articodingLevel;
 
 
+import com.articoding.model.articodingLevel.initialState.ACInitialState;
+
 public class ACLevel {
 
     private ACActiveBlock activeblocks;
     private ACBoardState boardstate;
 
+    private ACInitialState initialState;
 
     public ACLevel() {
     }
