@@ -116,7 +116,8 @@ public class LevelService {
 
     }
 
-    public Page<ILevel> getLevels(PageRequest pageRequest, Optional<Long> classId, Optional<Long> userId, Optional<Boolean> publicLevels) {
+    public Page<ILevel> getLevels(PageRequest pageRequest, Optional<Long> classId,
+                                  Optional<Long> userId, Optional<Boolean> publicLevels, Optional<String> title) {
         User actualUser = userService.getActualUser();
         /** Si quiere todos los niveles de una clase*/
         if(classId.isPresent()) {
@@ -142,7 +143,11 @@ public class LevelService {
         } else {
             if(publicLevels.isPresent()) {
                 /** Si quiere todos los niveles publicos*/
-                return levelRepository.findByPublicLevelTrue(pageRequest, ILevel.class);
+                if (title.isPresent()) {
+                    return levelRepository.findByPublicLevelTrueAndTitleContains(pageRequest, ILevel.class, title.get());
+                } else {
+                    return levelRepository.findByPublicLevelTrue(pageRequest, ILevel.class);
+                }
             } else {
                 /** Si quiere todos los niveles*/
                 if(roleHelper.isAdmin(actualUser)) {

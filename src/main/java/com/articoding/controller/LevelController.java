@@ -41,8 +41,10 @@ public class LevelController {
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "class",required=false) Optional<Long> classId,
             @RequestParam(name = "user", required=false) Optional<Long> userId,
-            @RequestParam(name = "publicLevels", required=false) Optional<Boolean> publicLevels) {
-        return ResponseEntity.ok(levelService.getLevels(PageRequest.of(page, size), classId, userId, publicLevels));
+            @RequestParam(name = "publicLevels", required=false) Optional<Boolean> publicLevels,
+            @RequestParam(name = "title", required=false) Optional<String> title
+            ) {
+        return ResponseEntity.ok(levelService.getLevels(PageRequest.of(page, size), classId, userId, publicLevels, title));
     }
     @PutMapping("/{levelId}")
     public ResponseEntity<CreatedRef> updateLevel(@RequestBody UpdateLevelForm levelForm,
