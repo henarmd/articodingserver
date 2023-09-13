@@ -96,7 +96,7 @@ public class ClassService {
         return classRepository.findById(classId, IClassRoomDetail.class);
     }
 
-    public Page<IClassRoom> getClasses(PageRequest pageRequest, Optional<Long> userId, Optional<Long> teachId, Optional<Long> levelId) {
+    public Page<IClassRoom> getClasses(PageRequest pageRequest, Optional<Long> userId, Optional<Long> teachId, Optional<Long> levelId, Optional<String> title) {
         /** Si quiere saber las clases de un usuario o de un nivel, debe ser minimo profesor*/
         User actualUser = userService.getActualUser();
         if(userId.isPresent() || teachId.isPresent() || levelId.isPresent()) {
@@ -104,23 +104,47 @@ public class ClassService {
                 throw new NotAuthorization("get class of user ");
             } else {/** Deveulvo las clases de las que es usuario o profesor */
                 if(userId.isPresent()) {
-                    return classRepository.findByStudentsId( userId.get(),pageRequest, IClassRoom.class);
+                    if (title.isPresent()) {
+                        return classRepository.findByStudentsIdAndNameContains( userId.get(), title.get() ,pageRequest, IClassRoom.class);
+                    } else {
+                        return classRepository.findByStudentsId( userId.get(),pageRequest, IClassRoom.class);
+                    }
                 } else if (teachId.isPresent()){
-                    return classRepository.findByTeachersId( teachId.get(),pageRequest, IClassRoom.class);
+                    if (title.isPresent()) {
+                        return classRepository.findByTeachersIdAndNameContains( teachId.get(), title.get(), pageRequest, IClassRoom.class);
+                    } else {
+                        return classRepository.findByTeachersId( teachId.get(),pageRequest, IClassRoom.class);
+                    }
                 } else {
-                    return classRepository.findByLevelsId( levelId.get(),pageRequest, IClassRoom.class);
+                    if(title.isPresent()) {
+                        return classRepository.findByLevelsIdAndNameContains( levelId.get(), title.get(), pageRequest, IClassRoom.class);
+                    } else {
+                        return classRepository.findByLevelsId( levelId.get(),pageRequest, IClassRoom.class);
+                    }
                 }
             }
         } else {
             if(roleHelper.isAdmin(actualUser)) {
                 /** Si es ADMIN, devuelve TODAS las clases*/
-                return classRepository.findBy(pageRequest, IClassRoom.class);
+                if(title.isPresent()) {
+                    return classRepository.findByAndNameContains(pageRequest, title.get(), IClassRoom.class);
+                } else {
+                    return classRepository.findBy(pageRequest, IClassRoom.class);
+                }
             } else if (roleHelper.isTeacher(actualUser)) {
                 /** Si es profe devuelve todas las clases donde es profesor*/
-                return classRepository.findByTeachersId( actualUser.getId(),pageRequest, IClassRoom.class);
+                if(title.isPresent()) {
+                    return classRepository.findByTeachersIdAndNameContains( actualUser.getId(), title.get(), pageRequest, IClassRoom.class);
+                } else {
+                    return classRepository.findByTeachersId( actualUser.getId(),pageRequest, IClassRoom.class);
+                }
             } else {
                 /** Si es alumno, deveulve las clases en las que es alumno */
-                return classRepository.findByStudentsId(actualUser.getId(),pageRequest, IClassRoom.class);
+                if(title.isPresent()) {
+                    return classRepository.findByStudentsIdAndNameContains(actualUser.getId(), title.get(), pageRequest, IClassRoom.class);
+                } else {
+                    return classRepository.findByStudentsId(actualUser.getId(),pageRequest, IClassRoom.class);
+                }
             }
         }
     }

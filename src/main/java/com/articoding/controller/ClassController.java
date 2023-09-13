@@ -30,8 +30,9 @@ public class ClassController {
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "user", required=false) Optional<Long> userId,
             @RequestParam(name = "teacher", required=false) Optional<Long> teachId,
-            @RequestParam(name = "level",required=false) Optional<Long> levelId){
-        return ResponseEntity.ok(classService.getClasses(PageRequest.of(page, size), userId, teachId, levelId));
+            @RequestParam(name = "level",required=false) Optional<Long> levelId,
+            @RequestParam(name = "title", required=false) Optional<String> title) {
+        return ResponseEntity.ok(classService.getClasses(PageRequest.of(page, size), userId, teachId, levelId, title));
     }
 
     @GetMapping("/{classId}")

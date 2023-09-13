@@ -8,6 +8,7 @@ C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articodin
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\Level.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\articodingLevel\ACCategoryData.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\in\IRole.java
+C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\articodingLevel\initialState\ACBlockyStatement.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\in\IUid.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\articodingLevel\initialState\ACBlocklyValue.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\Comment.java
@@ -17,6 +18,7 @@ C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articodin
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\articodingLevel\ACBoardHintState.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\repository\LevelRepository.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\repository\ClassRepository.java
+C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\articodingLevel\initialState\BlocklyBaseVariable.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\service\UserService.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\error\DisabledEntity.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\articodingLevel\initialState\ACInitialState.java
@@ -25,6 +27,7 @@ C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articodin
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\rest\ErrorMessage.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\repository\UserRepository.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\controller\JwtAuthenticationController.java
+C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\articodingLevel\initialState\ACBlocklyNextBlock.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\JwtRequest.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\UserForm.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\ClassRoom.java
@@ -39,6 +42,7 @@ C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articodin
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\controller\ClassController.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\RoleHelper.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\User.java
+C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\model\articodingLevel\initialState\ACBlockMutation.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\config\SwaggerConfig.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\repository\RoleRepository.java
 C:\Users\Henar\Documents\CLASES\TFG\ArticodingServer\src\main\java\com\articoding\config\JwtAuthenticationEntryPoint.java

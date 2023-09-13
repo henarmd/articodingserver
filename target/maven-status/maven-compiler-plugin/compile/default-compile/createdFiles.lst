@@ -22,6 +22,7 @@ com\articoding\config\SetupDataLoader.class
 com\articoding\error\RestError.class
 com\articoding\model\JwtResponse.class
 com\articoding\config\JwtTokenUtil.class
+com\articoding\model\articodingLevel\initialState\ACBlockMutation.class
 com\articoding\service\ServiceRepository.class
 com\articoding\controller\ClassController.class
 com\articoding\config\WebSecurityConfig.class
@@ -33,7 +34,9 @@ com\articoding\model\articodingLevel\ACBoardCellState.class
 com\articoding\service\ClassService.class
 com\articoding\error\DisabledEntity.class
 com\articoding\repository\ClassRepository.class
+com\articoding\model\articodingLevel\initialState\ACBlockyStatement.class
 com\articoding\model\in\ClassForm.class
+com\articoding\model\articodingLevel\initialState\BlocklyBaseVariable.class
 com\articoding\model\User.class
 com\articoding\model\articodingLevel\ACActiveBlock.class
 com\articoding\model\Level.class

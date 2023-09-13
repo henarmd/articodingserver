@@ -132,7 +132,12 @@ public class LevelService {
                     throw new NotAuthorization("ver niveles de la clase " + classId.get());
                 }
             }
-            return levelRepository.findByClassRoomsAndActiveTrue(classRoom, pageRequest, ILevel.class);
+            if(title.isPresent()) {
+                return levelRepository.findByClassRoomsAndActiveTrueAndTitleContains(classRoom, title.get(), pageRequest, ILevel.class);
+            } else {
+                return levelRepository.findByClassRoomsAndActiveTrue(classRoom, pageRequest, ILevel.class);
+
+            }
         } else if (userId.isPresent()) {
             /** Si quiere todos los niveles de un usuario, comprobamos que sea ADMIN */
             if(!roleHelper.isAdmin(actualUser)) {
@@ -152,10 +157,18 @@ public class LevelService {
                 /** Si quiere todos los niveles*/
                 if(roleHelper.isAdmin(actualUser)) {
                     /** Si es admin devuelve todos*/
-                    return levelRepository.findBy(pageRequest, ILevel.class);
+                    if (title.isPresent()) {
+                        return levelRepository.findByTitleContains(pageRequest, title.get(), ILevel.class);
+                    } else {
+                        return levelRepository.findBy(pageRequest, ILevel.class);
+                    }
                 } else {
                     /**Si no, devuelve los creados por el usuario*/
-                    return levelRepository.findByOwnerAndActiveTrue(actualUser, pageRequest, ILevel.class);
+                    if (title.isPresent()) {
+                        return levelRepository.findByOwnerAndActiveTrueAndTitleContains(actualUser,  title.get(), pageRequest, ILevel.class);
+                    } else {
+                        return levelRepository.findByOwnerAndActiveTrue(actualUser, pageRequest, ILevel.class);
+                    }
                 }
             }
 

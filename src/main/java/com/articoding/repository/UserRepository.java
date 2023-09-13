@@ -18,12 +18,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	User findByUsername(String username);
 
 	Page<IUser> findByRole(Pageable pageable, Role role);
+	Page<IUser> findByRoleAndUsernameContains(Pageable pageable, Role role, String username);
 
 	<T> Page<T> findByClassRoomsIn(Pageable pageable, List<ClassRoom> classRooms,Class<T> type);
+	<T> Page<T> findByClassRoomsInAndUsernameContains(Pageable pageable, List<ClassRoom> classRooms, String username, Class<T> type);
 
 	<T> Page<T> findByOwnerClassRoomsIn(Pageable pageable, List<ClassRoom> classRooms,Class<T> type);
+	<T> Page<T> findByOwnerClassRoomsInAndUsernameContains(Pageable pageable, List<ClassRoom> classRooms, String username, Class<T> type);
 
 	<T> Page<T> findBy(Pageable pageable, Class<T> type);
+	<T> Page<T> findByUsernameContains(Pageable pageable, String username,Class<T> type);
 
 	<T> T findById(Long id, Class<T> type);
 }

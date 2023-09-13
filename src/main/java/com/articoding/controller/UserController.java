@@ -33,9 +33,10 @@ public class UserController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "class", required=false) Optional<Long> clase,
-            @RequestParam(name = "teacher", defaultValue = "false") boolean teacher)  {
+            @RequestParam(name = "teacher", defaultValue = "false") boolean teacher,
+            @RequestParam(name = "title", required=false) Optional<String> title)  {
 
-        return ResponseEntity.ok(userService.geAllUser(PageRequest.of(page,size), clase, teacher));
+        return ResponseEntity.ok(userService.geAllUser(PageRequest.of(page,size), clase, teacher, title));
 
     }
 

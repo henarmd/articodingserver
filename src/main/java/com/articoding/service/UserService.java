@@ -137,7 +137,7 @@ public class UserService {
 
         userRepository.saveAll(usersList);
     }
-    public Page<IUser> geAllUser(PageRequest pageable, Optional<Long> clase, boolean teacher) {
+    public Page<IUser> geAllUser(PageRequest pageable, Optional<Long> clase, boolean teacher, Optional<String> title) {
         User actualUser = this.getActualUser();
         /** Comprobamos que sea, mínimo profesor */
         if(!roleHelper.can(actualUser.getRole(),"ROLE_TEACHER")) {
@@ -155,18 +155,34 @@ public class UserService {
                 throw new NotAuthorization("obtener alumnos de la clase " + clase.get());
             }
             if(teacher) {
-                return userRepository.findByOwnerClassRoomsIn(pageable, Arrays.asList(classRoom) , IUser.class);
+                if(title.isPresent()) {
+                    return userRepository.findByOwnerClassRoomsInAndUsernameContains(pageable, Arrays.asList(classRoom), title.get(), IUser.class);
+                } else {
+                    return userRepository.findByOwnerClassRoomsIn(pageable, Arrays.asList(classRoom) , IUser.class);
+                }
             } else {
-                return userRepository.findByClassRoomsIn(pageable, Arrays.asList(classRoom) , IUser.class);
+                if(title.isPresent()) {
+                    return userRepository.findByClassRoomsInAndUsernameContains(pageable, Arrays.asList(classRoom) , title.get(), IUser.class);
+                } else {
+                    return userRepository.findByClassRoomsIn(pageable, Arrays.asList(classRoom) , IUser.class);
+                }
             }
 
         } else {
             /** Si es admin, mostramos todos */
             if(roleHelper.isAdmin(actualUser)) {
-                return userRepository.findBy(pageable, IUser.class);
+                if(title.isPresent()) {
+                    return userRepository.findByUsernameContains(pageable, title.get(), IUser.class);
+                } else {
+                    return userRepository.findBy(pageable, IUser.class);
+                }
             } else {
                 /** Si es profesor mostramos solo USER */
-                return userRepository.findByRole(pageable, roleHelper.getUser());
+                if(title.isPresent()) {
+                    return userRepository.findByRoleAndUsernameContains(pageable, roleHelper.getUser(), title.get());
+                } else {
+                    return userRepository.findByRole(pageable, roleHelper.getUser());
+                }
             }
         }
     }

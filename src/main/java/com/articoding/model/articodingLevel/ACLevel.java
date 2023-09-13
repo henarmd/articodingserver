@@ -3,12 +3,15 @@ package com.articoding.model.articodingLevel;
 
 import com.articoding.model.articodingLevel.initialState.ACInitialState;
 
+import javax.persistence.Column;
+
 public class ACLevel {
 
     private ACActiveBlock activeblocks;
     private ACBoardState boardstate;
 
-    private ACInitialState initialState;
+    @Column(columnDefinition="TEXT")
+    private String initialState;
 
     public ACLevel() {
     }
@@ -27,5 +30,13 @@ public class ACLevel {
 
     public void setBoardstate(ACBoardState boardstate) {
         this.boardstate = boardstate;
+    }
+
+    public String getInitialState() {
+        return initialState;
+    }
+
+    public void setInitialState(String initialState) {
+        this.initialState = initialState;
     }
 }

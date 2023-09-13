@@ -3,17 +3,17 @@ package com.articoding.model.articodingLevel.initialState;
 import java.util.List;
 
 public class ACInitialState {
-    private List<ACBlocklyVariable> variables;
+    private BlocklyBaseVariable variables;
     private ACBlocklyBlock block;
 
     public ACInitialState() {
     }
 
-    public List<ACBlocklyVariable> getVariables() {
+    public BlocklyBaseVariable getVariables() {
         return variables;
     }
 
-    public void setVariables(List<ACBlocklyVariable> variables) {
+    public void setVariables(BlocklyBaseVariable variables) {
         this.variables = variables;
     }
 
