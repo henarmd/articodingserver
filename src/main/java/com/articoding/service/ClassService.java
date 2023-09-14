@@ -105,21 +105,46 @@ public class ClassService {
             } else {/** Deveulvo las clases de las que es usuario o profesor */
                 if(userId.isPresent()) {
                     if (title.isPresent()) {
-                        return classRepository.findByStudentsIdAndNameContains( userId.get(), title.get() ,pageRequest, IClassRoom.class);
+                        if (roleHelper.isAdmin(actualUser)) {
+                            return classRepository.findByStudentsIdAndNameContains( userId.get(), title.get(), pageRequest, IClassRoom.class);
+                        } else {
+                            return classRepository.findByStudentsIdAndNameContainsAndEnabledTrue( userId.get(), title.get(), pageRequest, IClassRoom.class);
+                        }
                     } else {
-                        return classRepository.findByStudentsId( userId.get(),pageRequest, IClassRoom.class);
+                        if (roleHelper.isAdmin(actualUser)) {
+                            return classRepository.findByStudentsId( userId.get(), pageRequest, IClassRoom.class);
+                        } else {
+                            return classRepository.findByStudentsIdAndEnabledTrue( userId.get(), pageRequest, IClassRoom.class);
+                        }
                     }
                 } else if (teachId.isPresent()){
                     if (title.isPresent()) {
-                        return classRepository.findByTeachersIdAndNameContains( teachId.get(), title.get(), pageRequest, IClassRoom.class);
+                        if (roleHelper.isAdmin(actualUser)) {
+                            return classRepository.findByTeachersIdAndNameContains( teachId.get(), title.get(), pageRequest, IClassRoom.class);
+                        } else {
+                            return classRepository.findByTeachersIdAndNameContainsAndEnabledTrue( teachId.get(), title.get(), pageRequest, IClassRoom.class);
+                        }
+
                     } else {
-                        return classRepository.findByTeachersId( teachId.get(),pageRequest, IClassRoom.class);
+                        if (roleHelper.isAdmin(actualUser)) {
+                            return classRepository.findByTeachersIdAndEnabledTrue( teachId.get(), pageRequest, IClassRoom.class);
+                        } else {
+                            return classRepository.findByTeachersId( teachId.get(), pageRequest, IClassRoom.class);
+                        }
                     }
                 } else {
                     if(title.isPresent()) {
-                        return classRepository.findByLevelsIdAndNameContains( levelId.get(), title.get(), pageRequest, IClassRoom.class);
+                        if (roleHelper.isAdmin(actualUser)) {
+                            return classRepository.findByLevelsIdAndNameContains( levelId.get(), title.get(), pageRequest, IClassRoom.class);
+                        } else {
+                            return classRepository.findByLevelsIdAndNameContainsAndEnabledTrue( levelId.get(), title.get(), pageRequest, IClassRoom.class);
+                        }
                     } else {
-                        return classRepository.findByLevelsId( levelId.get(),pageRequest, IClassRoom.class);
+                        if (roleHelper.isAdmin(actualUser)) {
+                            return classRepository.findByLevelsId( levelId.get(),pageRequest, IClassRoom.class);
+                        } else {
+                            return classRepository.findByLevelsIdAndEnabledTrue( levelId.get(),pageRequest, IClassRoom.class);
+                        }
                     }
                 }
             }
@@ -134,16 +159,16 @@ public class ClassService {
             } else if (roleHelper.isTeacher(actualUser)) {
                 /** Si es profe devuelve todas las clases donde es profesor*/
                 if(title.isPresent()) {
-                    return classRepository.findByTeachersIdAndNameContains( actualUser.getId(), title.get(), pageRequest, IClassRoom.class);
+                    return classRepository.findByTeachersIdAndNameContainsAndEnabledTrue( actualUser.getId(), title.get(), pageRequest, IClassRoom.class);
                 } else {
-                    return classRepository.findByTeachersId( actualUser.getId(),pageRequest, IClassRoom.class);
+                    return classRepository.findByTeachersIdAndEnabledTrue( actualUser.getId(),pageRequest, IClassRoom.class);
                 }
             } else {
                 /** Si es alumno, deveulve las clases en las que es alumno */
                 if(title.isPresent()) {
-                    return classRepository.findByStudentsIdAndNameContains(actualUser.getId(), title.get(), pageRequest, IClassRoom.class);
+                    return classRepository.findByStudentsIdAndNameContainsAndEnabledTrue(actualUser.getId(), title.get(), pageRequest, IClassRoom.class);
                 } else {
-                    return classRepository.findByStudentsId(actualUser.getId(),pageRequest, IClassRoom.class);
+                    return classRepository.findByStudentsIdAndEnabledTrue(actualUser.getId(), pageRequest, IClassRoom.class);
                 }
             }
         }
