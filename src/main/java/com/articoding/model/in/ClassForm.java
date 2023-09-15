@@ -12,7 +12,7 @@ public class ClassForm {
 
     String description;
 
-    boolean enabled;
+    boolean enabled = true;
 
     public ClassForm() {
     }
